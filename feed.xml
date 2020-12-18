@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Yiwen Gong</title>
+    <description>A profolio for an artical programmer.
+</description>
+    <link>http://yourdomain.com/</link>
+    <atom:link href="http://yourdomain.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Fri, 18 Dec 2020 14:24:48 +0100</pubDate>
+    <lastBuildDate>Fri, 18 Dec 2020 14:24:48 +0100</lastBuildDate>
+    <generator>Jekyll v3.8.6</generator>
+    
+      <item>
+        <title>aws developer associate test CodeDeploy quick note</title>
+        <description>&lt;h1 id=&quot;code-deploy&quot;&gt;code deploy&lt;/h1&gt;
+&lt;p&gt;integrate with CI/CD tools as well as config management tools &lt;code class=&quot;highlighter-rouge&quot;&gt;ansible&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;chef&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;puppet&lt;/code&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;steps-to-deploy-a-project&quot;&gt;Steps to deploy a project&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;/img/code_deploy.png&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;deploy-methods&quot;&gt;deploy methods&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;inplace
+    &lt;ul&gt;
+      &lt;li&gt;as called &lt;code class=&quot;highlighter-rouge&quot;&gt;rolling update&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;stop the instance while updating and use other instances (capacity will be smaller)&lt;/li&gt;
+      &lt;li&gt;can be used for EC2, on-premise systems, not for lambda&lt;/li&gt;
+      &lt;li&gt;need redeploy for rollback&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;green/blue
+    &lt;ul&gt;
+      &lt;li&gt;prepare new instances and switch traffic once deployment is done&lt;/li&gt;
+      &lt;li&gt;blue is is the active deployment, green is the new release&lt;/li&gt;
+      &lt;li&gt;can also be used for lambda&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;appspec-file-to-configure-deployment&quot;&gt;appspec file to configure deployment&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;lambda deployment
+    &lt;ul&gt;
+      &lt;li&gt;version&lt;/li&gt;
+      &lt;li&gt;resources (name and properties of lambda function)&lt;/li&gt;
+      &lt;li&gt;hooks (specify when should lambda function run)
+        &lt;ul&gt;
+          &lt;li&gt;BeforeAllowTraffic&lt;/li&gt;
+          &lt;li&gt;AfterAllowTraffic&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;ec2 and on premises
+    &lt;ul&gt;
+      &lt;li&gt;version&lt;/li&gt;
+      &lt;li&gt;os&lt;/li&gt;
+      &lt;li&gt;files (source and destination)&lt;/li&gt;
+      &lt;li&gt;hooks
+        &lt;ul&gt;
+          &lt;li&gt;ApplicationStop (Gracefully stio the app for the new verion)&lt;/li&gt;
+          &lt;li&gt;DownloadBundle (CD agent copies revision files to a temporary location)&lt;/li&gt;
+          &lt;li&gt;BeforeInstall (e.g backing up current revision, decrypting files)&lt;/li&gt;
+          &lt;li&gt;Install (copy revision files from temp to correct location)&lt;/li&gt;
+          &lt;li&gt;After install (e.g config tasks, change permission)&lt;/li&gt;
+          &lt;li&gt;ApplicationStart&lt;/li&gt;
+          &lt;li&gt;ValidateService (tests)&lt;/li&gt;
+          &lt;li&gt;BeforeBlockTraffic (tasks before deregistering from load balancer)&lt;/li&gt;
+          &lt;li&gt;BlockTraffic (deregister instances from load balancer)&lt;/li&gt;
+          &lt;li&gt;AfterBlockTraffic (tasks after deregistering from load balancer)&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        <pubDate>Wed, 27 Feb 2019 11:00:00 +0100</pubDate>
+        <link>http://yourdomain.com/2019/02/27/aws-developer-associate-code-deploy-quick-note.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/2019/02/27/aws-developer-associate-code-deploy-quick-note.html</guid>
+        
+        <category>aws</category>
+        
+        <category>study note</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>aws developer associate test IAM quick note</title>
+        <description>&lt;h1 id=&quot;iam&quot;&gt;iam&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;components: &lt;code class=&quot;highlighter-rouge&quot;&gt;user, group, role, policy&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;user has many groups&lt;/li&gt;
+  &lt;li&gt;role is defined for aws resources&lt;/li&gt;
+  &lt;li&gt;policy can be used to define &lt;code class=&quot;highlighter-rouge&quot;&gt;role, user, group&lt;/code&gt; access&lt;/li&gt;
+  &lt;li&gt;policy is a json file defining one or more permissions&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;create-a-user&quot;&gt;create a user&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;console
+    &lt;ul&gt;
+      &lt;li&gt;need user name and password&lt;/li&gt;
+      &lt;li&gt;can reqeust to reset password&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;programtic
+    &lt;ul&gt;
+      &lt;li&gt;access key id, access key secret&lt;/li&gt;
+      &lt;li&gt;only able to see the secret when creating the user, need to download the csv for further reference&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;create-a-role&quot;&gt;create a role&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;can create from a aws resource
+    &lt;ul&gt;
+      &lt;li&gt;e.g EC2 giving s3 read permission, any instance has this role attached can access S3&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;exam-tips&quot;&gt;exam tips&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;iam is global, does not relate to region&lt;/li&gt;
+  &lt;li&gt;root account is the account first created, shouldn’t use this account normally&lt;/li&gt;
+  &lt;li&gt;always use MFA on root account&lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+        <pubDate>Fri, 11 Jan 2019 15:30:09 +0100</pubDate>
+        <link>http://yourdomain.com/2019/01/11/aws-developer-test-iam-quick-note.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/2019/01/11/aws-developer-test-iam-quick-note.html</guid>
+        
+        <category>aws</category>
+        
+        <category>study note</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Numpy学习笔记 (1)</title>
+        <description>&lt;h2 id=&quot;nparray&quot;&gt;np.array&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;construct ndarray from python array&lt;/li&gt;
+  &lt;li&gt;ndim: 返回值有几个括弧&lt;/li&gt;
+  &lt;li&gt;dtype: 也是object，指定ndarray的型, 必须整个数列都是一个型的
+    &lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ndmin&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;complex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# =&amp;gt; [[ 1.+0.j,  2.+0.j,  3.+0.j]]
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;npdtype&quot;&gt;np.dtype&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;dtype&lt;/code&gt;是object而不是常数&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;np.int32&lt;/code&gt;是type class，和&lt;code class=&quot;highlighter-rouge&quot;&gt;np.dtype&lt;/code&gt;不同
+    &lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;dt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;int32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;ndarrayshape&quot;&gt;ndarray.shape&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;overwrite shape can reshape the array, reshape后维度不会变， 原来的array会被覆盖&lt;/li&gt;
+  &lt;li&gt;reshape会返回新的array
+    &lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]])&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reshape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;ndarrayndim&quot;&gt;ndarray.ndim&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;返回维度（int）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;新建np-array&quot;&gt;新建np array&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;np.empty (default dtype float 64)&lt;/li&gt;
+  &lt;li&gt;np.ones (default dtype float 64)&lt;/li&gt;
+  &lt;li&gt;np.zeros (default dtype float 64)
+    &lt;ul&gt;
+      &lt;li&gt;shape can be &lt;code class=&quot;highlighter-rouge&quot;&gt;(1, 2)&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;[1, 2]&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;如果只指定&lt;code class=&quot;highlighter-rouge&quot;&gt;int&lt;/code&gt;，默认是&lt;code class=&quot;highlighter-rouge&quot;&gt;int64&lt;/code&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;从既存的array创建&quot;&gt;从既存的array创建&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;原来的array和ndarray一定是两个object
+    &lt;ol&gt;
+      &lt;li&gt;np.asarray (list or tuple)&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+  &lt;li&gt;！⚠️tuple的元素对齐返回值不同
+    &lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;asarray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;#返回二元数组，dtype是int
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;asarray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;#返回一元数组，dtype是object
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;nparange&quot;&gt;np.arange&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;dtype是int，输入float的时候小数点部分会被切掉&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;endpoint=False&lt;/code&gt;会把最后那个数也加进去
+    &lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;nplinspace&quot;&gt;np.linspace&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;base&lt;/code&gt;是log space的底，default是0（线性）
+    &lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linspace&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# 起点，终点，点数
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;slice&quot;&gt;slice&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;use &lt;code class=&quot;highlighter-rouge&quot;&gt;slice&lt;/code&gt; method
+    &lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;slice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;[start:stop:step]
+    &lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+    &lt;p&gt;二元数组的情况下&lt;/p&gt;
+    &lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]])&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# =&amp;gt; True
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;boolean slicing
+    &lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]])&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# =&amp;gt; 返回一位数组
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;boradcasting&quot;&gt;boradcasting&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;两个ndarray shape相同时，操作是element-wise&lt;/li&gt;
+  &lt;li&gt;可以boardcast的情况：形状完全相同，形状(n, 1)和(n, m)的情况&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        <pubDate>Wed, 26 Dec 2018 02:30:09 +0100</pubDate>
+        <link>http://yourdomain.com/2018/12/26/numpy-study-notes-1.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/2018/12/26/numpy-study-notes-1.html</guid>
+        
+        <category>python</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Use `raise_error` matcher in Rspec</title>
+        <description>&lt;p&gt;Yesterday I came accross a tricky useage of &lt;code class=&quot;highlighter-rouge&quot;&gt;raise_error&lt;/code&gt; matcher in rspec, first I try to use the one line syntax &lt;code class=&quot;highlighter-rouge&quot;&gt;is_expected.to&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;language-rb highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;it&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_expected&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;to&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;raise_error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SomeError&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;but I got an eror which stops the test before the test is finished.&lt;/p&gt;
+
+&lt;p&gt;It is confusing in the first time, because &lt;code class=&quot;highlighter-rouge&quot;&gt;is_expected.to&lt;/code&gt; is shortcut for &lt;code class=&quot;highlighter-rouge&quot;&gt;expect(subject)&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Then I found this &lt;a href=&quot;https://github.com/rspec/rspec-expectations/issues/805#issuecomment-112239820&quot;&gt;excellent explanation&lt;/a&gt; in Github isses.&lt;/p&gt;
+
+&lt;p&gt;So &lt;code class=&quot;highlighter-rouge&quot;&gt;expect(subject)&lt;/code&gt; is not a block, subject is executed instantly, so rspec will stop before evaluating &lt;code class=&quot;highlighter-rouge&quot;&gt;raise_error&lt;/code&gt; matcher.&lt;/p&gt;
+
+&lt;p&gt;In order to make it work, we can make subject itself a block&lt;/p&gt;
+&lt;div class=&quot;language-rb highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;subject&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;raise&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;SomeError&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;it&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_expected&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;to&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;raise_error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SomeError&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;But this syntax is creepy, instead it’s better to use&lt;/p&gt;
+&lt;div class=&quot;language-rb highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;subject&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;raise&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;SomeError&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;expect&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subject&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;to&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;raise_error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;SomeError&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+</description>
+        <pubDate>Thu, 25 Oct 2018 04:30:09 +0200</pubDate>
+        <link>http://yourdomain.com/2018/10/25/use-raise-error-matcher-in-rspec.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/2018/10/25/use-raise-error-matcher-in-rspec.html</guid>
+        
+        <category>programming</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Serialize Non-ActiveRecord Model Using ActiveModel::Serializer in Rails</title>
+        <description>&lt;p&gt;Recently I’ve been working in backend which connects to another API, you may need to send a specific format of JSON data which is not the same as database resource.&lt;/p&gt;
+
+&lt;h2 id=&quot;create-a-serializable-resource&quot;&gt;Create A Serializable Resource&lt;/h2&gt;
+&lt;p&gt;Currently I’m using &lt;a href=&quot;https://github.com/rails-api/active_model_serializers/tree/0-10-stable&quot;&gt;active_model_serializers 0.10.0&lt;/a&gt;. From the documentation we know &lt;code class=&quot;highlighter-rouge&quot;&gt;ActiveModel::Serializer&lt;/code&gt; wraps a serializable resource, to create a serializable resource we need to create a plain old Ruby object inherits &lt;code class=&quot;highlighter-rouge&quot;&gt;ActiveModelSerializers::Model&lt;/code&gt;, then create a corresponding serializer.&lt;/p&gt;
+
+&lt;p&gt;For example:&lt;/p&gt;
+&lt;div class=&quot;language-rb highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MyModel&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;ActiveModelSerializers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Model&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;initialize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:)&lt;/span&gt;
+    &lt;span class=&quot;vi&quot;&gt;@title&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;
+    &lt;span class=&quot;vi&quot;&gt;@body&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;body&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;converted_body&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# do something&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-rb highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MyModelSerializer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;ActiveModelSerializers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Serializer&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;attributes&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:converted_body&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;handling-nested-json&quot;&gt;Handling Nested JSON&lt;/h2&gt;
+&lt;p&gt;You can use &lt;code class=&quot;highlighter-rouge&quot;&gt;has_many&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;has_one&lt;/code&gt; method in &lt;code class=&quot;highlighter-rouge&quot;&gt;ActiveModel::Serializer&lt;/code&gt; to handle nested json, although it doesn’t mean the same with Rails model relations.&lt;/p&gt;
+
+&lt;p&gt;For example:&lt;/p&gt;
+&lt;div class=&quot;language-rb highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MyModel&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;ActiveModelSerializers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Model&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;initialize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;object: &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;vi&quot;&gt;@title&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;
+    &lt;span class=&quot;vi&quot;&gt;@body&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;body&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; 
+
+  &lt;span class=&quot;nf&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;related_models&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;related_models&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;map&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;related_model&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+      &lt;span class=&quot;no&quot;&gt;RelatedModel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;related_model: &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;related_model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-rb highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MyModelSerializer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;ActiveModelSerializers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Serializer&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;has_many&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:related_models&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;ActiveModelSerializers::Serializer&lt;/code&gt; will automatically look for a serializer named &lt;code class=&quot;highlighter-rouge&quot;&gt;RelatedModelSerializer&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;reference&quot;&gt;Reference&lt;/h2&gt;
+&lt;p&gt;Find more explainations in   https://github.com/rails-api/active_model_serializers/tree/0-10-stable#what-does-a-serializable-resource-look-like&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 25 Oct 2018 04:30:09 +0200</pubDate>
+        <link>http://yourdomain.com/2018/10/25/serialize-non-activerecord-model-in-rails.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/2018/10/25/serialize-non-activerecord-model-in-rails.html</guid>
+        
+        <category>programming</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Plot Financial Data Using Matplotlib (super basic)</title>
+        <description>&lt;h2 id=&quot;import-libraries&quot;&gt;import libraries&lt;/h2&gt;
+&lt;p&gt;In order to plot the data, we need to import libraries for dataframe and plot, also set plot inline if you’re  using a notebook.&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pandas&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;matplotlib.pyplot&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matplotlib&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;inline&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;plot-stock-price&quot;&gt;plot stock price&lt;/h2&gt;
+&lt;p&gt;Code is super simple, you just need to set the index of the dataframe to timestamp. If you find the figure to small, use pylab to set the figure size.&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pylab&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rcParams&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;rcParams&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'figure.figsize'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;50&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;13&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;apple_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;market_train_df&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;market_train_df&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'assetCode'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'AAPL.O'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;apple_data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;set_index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'time'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'close'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;grid&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/img/python-plot-financial-data-1.png&quot; style=&quot;height:50%&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;compare-multiple-plots&quot;&gt;compare multiple plots&lt;/h2&gt;
+&lt;p&gt;Then I’m trying to sanitize the data by looking at the figure it self, I want to plot all suspicious assets.&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;code&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;suspicious_asset_code&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;apple_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;market_train_df&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;market_train_df&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'assetCode'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;code&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;apple_data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;set_index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'time'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'close'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;grid&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;img src=&quot;/img/python-financial-plot-2.png&quot; style=&quot;height:50%&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;This only gives me one figure with all assets, it’s ugly. I want to plot them one by one.&lt;/p&gt;
+
+&lt;p&gt;Subplot will give you figures put up together, use&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# treat the whole figure as a grid, specify how many rows and columns you wanna plot and the index of the current sub plot
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fig&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_subplot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;columns&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Then you’ll get graphs all together to detect abnormal data.
+&lt;img src=&quot;/img/python-plot-subplot.png&quot; style=&quot;height:50%&quot; /&gt;&lt;/p&gt;
+</description>
+        <pubDate>Tue, 23 Oct 2018 14:30:09 +0200</pubDate>
+        <link>http://yourdomain.com/2018/10/23/plot-financial-data-super-basic.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/2018/10/23/plot-financial-data-super-basic.html</guid>
+        
+        <category>programming</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Configure Mailgun settings in Rails app</title>
+        <description>&lt;p&gt;Recently I’m learning to create a Rails 5 api only application with an android mobile application. I want to send a activation email after user registered from the android app, and I found there is a free Mailgun add-on on Heroku. It’s perfect choice to start to play with because you can send up to 100 messages/hour without being charged. The documentation is good enough but I do found several steps confusing.&lt;/p&gt;
+
+&lt;p&gt;Firstly, you need to create a Mailgun account and add your credit card information, otherwise you can’t send to recipents other than authorized ones(which means test only).&lt;/p&gt;
+
+&lt;p&gt;Then, use the test domain(XXX@XXX.mailgun.org) to ensure Mailgun not being blocked by your test mail address(In my case I use qq mail at first, it actually blocks all traffic from mailgun). After that, you need to add a custom domain. Go to your domain name provider and configure DNS settings as following the steps of Mailgun instructions. In my case I use Namecheap and it took me a while(a cup of coffee) for Mailgun to verify my domain.&lt;/p&gt;
+
+&lt;p&gt;After your custom domain is active, configure your development environment and make sure it works. In my case I use smtp instead of api call, the settings are for example:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+	:address =&amp;gt; &quot;smtp.mailgun.org&quot;,
+	:port =&amp;gt; 587,
+	:domain =&amp;gt; mydomain.club',
+	:user_name =&amp;gt; &quot;postmaster@mydomain.club&quot;,
+	:password =&amp;gt; XXXX
+  }
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then start your rails server and see if the mail was delivered. I spent quite a few hours here because at first my emails weren’t delivered. I refered to the log and showed Mailgun accepted the mail address, and one minute later a ESP throttling message showed up. The reason is Mailgun being blocked by certain ISP(like qq mail, in this case I have to use an extra mail hosting service), so I couldn’t see any mail sent inbox.&lt;/p&gt;
+
+&lt;p&gt;If OK in development environemnt, change your production settings as well, it should work as well.&lt;/p&gt;
+
+</description>
+        <pubDate>Wed, 29 Mar 2017 14:15:09 +0200</pubDate>
+        <link>http://yourdomain.com/2017/03/29/configure-mailgun-setting-in-rails-app.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/2017/03/29/configure-mailgun-setting-in-rails-app.html</guid>
+        
+        <category>programming</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>如何在ubuntu16通过终端设置shadowsocks实现科学上网</title>
+        <description>&lt;p&gt;给三年前买的旧笔记本重装了Ubuntu桌面版，第一件要做的事就是科学上网啦。&lt;/p&gt;
+
+&lt;p&gt;┗(・o・)┛ナハ┗(・o・)┛ナハ&lt;/p&gt;
+
+&lt;p&gt;shadowsocks的安装有两种方法，一是安装shadowsocks-qt5 GUI版，二是通过终端运行shadowsocks。我试过了第一种GUI安装，但是一直连不上服务器，发现输出的json配置文件格式是错误的，于是选择了第二种, 具体步骤如下:&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&quot;1-下载shadowsocks&quot;&gt;1. 下载shadowsocks&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo apt-get update
+sudo apt-get install python-pip
+sudo apt-get install python-setuptools m2crypto
+pip install shadowsocks
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;2-设置配置文件&quot;&gt;2. 设置配置文件&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;{
+&quot;server&quot;:&quot;XX.XX.XX.XX&quot;,
+&quot;server_port&quot;:XX,
+&quot;local_port&quot;:1080,
+&quot;password&quot;:&quot;your password&quot;,
+&quot;timeout&quot;:600,
+&quot;method&quot;:&quot;aes-256-cfb&quot;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;3-启动shadowsocks&quot;&gt;3. 启动shadowsocks&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sslocal -c /your/path/shadowsocks.json
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;如果启动成功了可以看到如下信息(/home/momoko/shadowsocks/ss-config.json是我存放配置文件的路径)&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;INFO: loading config from /home/momoko/shadowsocks/ss-config.json
+2016-12-06 19:31:54 INFO     loading libcrypto from libcrypto.so.1.0.0
+2016-12-06 19:31:54 INFO     starting local at 127.0.0.1:1080
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;4-设置浏览器&quot;&gt;4. 设置浏览器&lt;/h3&gt;
+
+&lt;p&gt;接下来需要设置浏览器，代理到shadowsocks指定端口(默认情况是1080)&lt;/p&gt;
+
+&lt;p&gt;我使用的浏览器是Ubuntu下的Chromium，chrome插件本来可以在chrome商店里下载到，成功翻墙之前是进不去的。这里推荐从github上下载SwitchyOmega，里面有中文下载说明, 网址如下:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/FelisCatus/SwitchyOmega/releases/&quot;&gt;https://github.com/FelisCatus/SwitchyOmega/releases/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;还有配合GFWList的使用方法:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/FelisCatus/SwitchyOmega/wiki/GFWList&quot;&gt;https://github.com/FelisCatus/SwitchyOmega/wiki/GFWList&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;下载结束之后需要设置代理选项，情景模式里选&lt;code class=&quot;highlighter-rouge&quot;&gt;socks 5&lt;/code&gt;, 端口号&lt;code class=&quot;highlighter-rouge&quot;&gt;1080&lt;/code&gt;，其余设置参考上述链接。&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;打开youtube或是facebook测试一下，有点小惊喜呢。┌&lt;/td&gt;
+      &lt;td&gt;≧∇≦&lt;/td&gt;
+      &lt;td&gt;┘&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;5-attention&quot;&gt;5. Attention&lt;/h3&gt;
+
+&lt;p&gt;值得注意的是，虽然浏览器可以翻墙了，但是用终端访问比如&lt;code class=&quot;highlighter-rouge&quot;&gt;curl www.google.com&lt;/code&gt; 还是没有响应，这里需要安装额外的插件，我使用的是proxychains4，具体安装方法请自行搜索。如果你运行的是例如polipo全局代理的插件，在终端运行某些命令会失败（比如说&lt;code class=&quot;highlighter-rouge&quot;&gt;git clone&lt;/code&gt;），这时候暂时关掉代理插件即可。&lt;/p&gt;
+
+&lt;p&gt;什么？不会安装？浏览器都能翻墙了还不谷歌一下。 (￣▽￣人))　((人￣▽￣)&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;自从学会科学上网，看youtube视频根本停不下来。&lt;/p&gt;
+
+&lt;p&gt;へ(￣&lt;em&gt;￣へ)(ノ￣&lt;/em&gt;￣)ノ パラパラ♪&lt;/p&gt;
+
+&lt;p&gt;最后推荐一个颜文字网站：&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://kaomojiya.com/&quot;&gt;http://kaomojiya.com/&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Tue, 06 Dec 2016 07:23:06 +0100</pubDate>
+        <link>http://yourdomain.com/2016/12/06/install-shadowsocks-in-ubuntu.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/2016/12/06/install-shadowsocks-in-ubuntu.html</guid>
+        
+        <category>programming</category>
+        
+        <category>中文</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>Troubleshooting with Installing Broadcom Wireless Drivers in Ubuntu Desktop</title>
+        <description>&lt;p&gt;Days before, I changed the operating system of my old laptop from Windows7 to Ubuntu Desktop, I installed Ubuntu from a USB stick from my friend. After installing I found I Broadcom wireless driver wasn’t installed so I couldn’t connect to my WiFi. I tried several ways then found the solution, hope it my be helpful.&lt;/p&gt;
+
+&lt;p&gt;To download the driver from Internet, you need to connect with Ethernet.&lt;/p&gt;
+
+&lt;p&gt;Open Software and Update from system and configuration, open the fifth tab optional drivers and see if wireless driver comes out or not.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/ubuntu1.png&quot; style=&quot;height:50%;width:50%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Make sure allowing downloading drivers from Internet is checked in the first tab Ubuntu Software.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/ubuntu2.png&quot; style=&quot;height:50%;width:50%;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If it still doesn’t come out, you need to manually install it from terminal, use &lt;code class=&quot;highlighter-rouge&quot;&gt;lspci -nn -d 14e4:&lt;/code&gt; command to see which network card you’re using, then install the corresponding driver. &lt;a href=&quot;http://askubuntu.com/questions/55868/installing-broadcom-wireless-drivers&quot;&gt;http://askubuntu.com/questions/55868/installing-broadcom-wireless-drivers&lt;/a&gt; offers an excellent guide.&lt;/p&gt;
+</description>
+        <pubDate>Fri, 02 Dec 2016 13:23:06 +0100</pubDate>
+        <link>http://yourdomain.com/2016/12/02/Troubleshooting-with-Installing-Broadcom-Wireless-Drivers-in-Ubuntu-Desktop.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/2016/12/02/Troubleshooting-with-Installing-Broadcom-Wireless-Drivers-in-Ubuntu-Desktop.html</guid>
+        
+        <category>programming</category>
+        
+        
+      </item>
+    
+      <item>
+        <title>My Experience And Thoughts on Remote Working as A Junior Programmer</title>
+        <description>&lt;h3 id=&quot;about-me-and-my-job&quot;&gt;About Me And My Job&lt;/h3&gt;
+
+&lt;p&gt;I started my current job a year ago when I was an exchange student in Japan, I was second year in university then. I worked in the office for 9 months, after that my exchange year ended, I went back to my home university and started remote working since then. Until now, it has been half year.&lt;/p&gt;
+
+&lt;p&gt;I rent an apartment and lived alone near my university. I’m not full-time employed, I worked for about 5 hours a day, every day in the week because I found this schedule suits me better. When I’m not working, I go to classes, playing the piano or reading books.&lt;/p&gt;
+
+&lt;h3 id=&quot;my-half-year-on-remote-working&quot;&gt;My Half Year on Remote Working&lt;/h3&gt;
+
+&lt;h4 id=&quot;good-parts&quot;&gt;good parts&lt;/h4&gt;
+
+&lt;p&gt;The best part of remote working is much more free time. I don’t have to wake up early and spend hours on a crowded subway to the office, I could spend more time on doing whatever I want to do.&lt;/p&gt;
+
+&lt;p&gt;Also for me, working from home is easier to concentrate because there are fewer distractions.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/remote_working.jpg&quot; style=&quot;height:50%;width:50%;&quot; /&gt;&lt;/p&gt;
+&lt;p style=&quot;font-size:14px&quot;&gt;My desktop and my friends  o(●´ω｀●)oわくわく♪&lt;/p&gt;
+
+&lt;h4 id=&quot;challenges-for-a-junior-programmer&quot;&gt;challenges for a junior programmer&lt;/h4&gt;
+
+&lt;p&gt;For me, the biggest challenge is finding out the solution to the problem independently. As a junior developer, I don’t have much experience, when I encounter a problem that appears for the first time, it’s hard to get response from my colleges immediately, more often, I have to find out how to handle it by myself, sometimes it’s quite hard because I really don’t know what to do with it, and have to dig really deep on the problem.&lt;/p&gt;
+
+&lt;p&gt;The second is about confirming specification. When I just started remote working, it’s quite often to get confused with specification in junior year, and confirming specification online usually takes more time than face to face, and I have to make sure my colleges are available at that time.&lt;/p&gt;
+
+&lt;p&gt;Another challenge is about building up habits. For me, I don’t have a fixed working schedule, sometimes I find it hard to get myself backing to working from the lure of reading Reddit or watching Youtube videos. It needs self-discipline to keep myself from slacking off.&lt;/p&gt;
+
+&lt;h4 id=&quot;mental-challenges&quot;&gt;mental challenges&lt;/h4&gt;
+
+&lt;p&gt;It’s easy to feel emotionally detached with other people. Since I live alone, and my colleges are all in another country, I feel lonely from time to time. I can’t keep being productive if I feel lonely. It’s not healthy to keep sitting in front of a desktop for all day, going out and networking is also important.&lt;/p&gt;
+
+&lt;h3 id=&quot;my-thinkings&quot;&gt;My Thinkings&lt;/h3&gt;
+
+&lt;p&gt;I loved my current living style. I can get my work done and do whatever I want to do. For me, it’s not easy at first, half year later, I enjoy more and more.&lt;/p&gt;
+</description>
+        <pubDate>Tue, 15 Nov 2016 10:31:00 +0100</pubDate>
+        <link>http://yourdomain.com/2016/11/15/my-experience-and-thoughts-on-remote-working-as-a-junior-programmer.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/2016/11/15/my-experience-and-thoughts-on-remote-working-as-a-junior-programmer.html</guid>
+        
+        <category>programming</category>
+        
+        <category>life</category>
+        
+        
+      </item>
+    
+  </channel>
+</rss>
