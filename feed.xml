@@ -5,8 +5,8 @@
     <description>Hi, ich will dir hier Laura vorstellen :)</description>
     <link>http://localhost:8000//</link>
     <atom:link href="http://localhost:8000//feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Fri, 18 Dec 2020 15:51:53 +0100</pubDate>
-    <lastBuildDate>Fri, 18 Dec 2020 15:51:53 +0100</lastBuildDate>
+    <pubDate>Sat, 19 Dec 2020 11:07:49 +0100</pubDate>
+    <lastBuildDate>Sat, 19 Dec 2020 11:07:49 +0100</lastBuildDate>
     <generator>Jekyll v3.8.3</generator>
     
   </channel>
