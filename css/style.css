@@ -72,7 +72,7 @@
 		h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 			color: inherit;
 			text-decoration: none;
-			border: 0;
+            border: 0;
 		}
 
 	h2 {
@@ -696,7 +696,11 @@
 					-ms-transition: all 0.2s ease-in-out;
 					transition: all 0.2s ease-in-out;
 					background: rgba(188, 202, 206, 0.15);
-				}
+                }
+                
+                #header nav ul li a {
+                    color: #2c2a2c;
+                }
 
 				#header nav .cc-active {
 					font-weight: 900;
@@ -730,7 +734,11 @@
 
 				#header.alt nav ul li.active > a, #header.alt nav ul li:hover > a {
 					border: solid 1px;
-				}
+                }
+        #header a {
+            font-style: normal;
+            color: #2c2a2c;
+        }
 
 
 /* Blog */
@@ -871,7 +879,10 @@
 
 			#banner .inner footer {
 				margin: 2em 0 0 0;
-			}
+            }
+        #banner a {
+            font-style: normal;
+        }
 
 /* Main */
 
