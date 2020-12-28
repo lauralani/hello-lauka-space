@@ -72,7 +72,7 @@
 		h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
 			color: inherit;
 			text-decoration: none;
-			border: 0;
+            border: 0;
 		}
 
 	h2 {
@@ -127,7 +127,8 @@
         color: #2c2a2c;
 	}
 
-		header.special:before, header.special:after {
+        /*
+        header.special:before, header.special:after {
 			border-bottom: solid 1.5px;
 			border-top: solid 1.5px;
 			content: '';
@@ -145,6 +146,7 @@
 		header.special:after {
 			right: 0;
 		}
+        */
 
 		header.special h2 {
 			margin-bottom: 0;
@@ -696,7 +698,11 @@
 					-ms-transition: all 0.2s ease-in-out;
 					transition: all 0.2s ease-in-out;
 					background: rgba(188, 202, 206, 0.15);
-				}
+                }
+                
+                #header nav ul li a {
+                    color: #2c2a2c;
+                }
 
 				#header nav .cc-active {
 					font-weight: 900;
@@ -730,7 +736,11 @@
 
 				#header.alt nav ul li.active > a, #header.alt nav ul li:hover > a {
 					border: solid 1px;
-				}
+                }
+        #header a {
+            font-style: normal;
+            color: #2c2a2c;
+        }
 
 
 /* Blog */
@@ -850,7 +860,6 @@
 					border-top: solid 2px;
 					font-size: 2.5em;
 					font-weight: 900;
-					letter-spacing: 0.2em;
 					margin: 0;
 					padding-left: 0.05em;
 					position: relative;
@@ -860,7 +869,8 @@
 			#banner .inner p {
 				letter-spacing: 0.1em;
 				margin: 0;
-				text-transform: uppercase;
+                text-transform: uppercase;
+                font-weight: normal;
 			}
 
 				#banner .inner p a {
@@ -871,7 +881,10 @@
 
 			#banner .inner footer {
 				margin: 2em 0 0 0;
-			}
+            }
+        #banner a {
+            font-style: normal;
+        }
 
 /* Main */
 
@@ -880,7 +893,7 @@
 		background-position: top left, top right, bottom left, bottom right;
 		background-repeat: no-repeat;
 		background-size: 25em;
-		padding: 7em 0;
+        padding: 7em 0;
 	}
 
 		#main > :last-child {
@@ -898,7 +911,7 @@
 				padding-top: 0;
 				margin-top: 0;
 			}
-
+            
 	body.index #main {
 		padding-top: 5em;
 	}
