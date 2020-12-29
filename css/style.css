@@ -937,6 +937,7 @@
     ul.copyright a {
         font-weight: 500;
         color: white;
+        font-style: normal;
     }
 
 /* Footer */
