@@ -914,7 +914,12 @@
             
 	body.index #main {
 		padding-top: 5em;
-	}
+    }
+    
+    section.style2 h3 {
+        color: #ee4c7c;
+        font-weight: 500;
+    }
 
 /* CTA */
 
